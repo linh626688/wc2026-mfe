@@ -15,7 +15,11 @@
 
 declare module 'remote_matches/MatchList' {
   import { FC } from 'react';
-  const MatchList: FC;
+  // Import từ @worldcup/types — nguồn sự thật duy nhất cho props contract
+  // Khi Remote thay đổi MatchListProps, chỉ cần sửa packages/types/src/index.ts
+  import type { MatchListProps } from '@worldcup/types';
+
+  const MatchList: FC<MatchListProps>;
   export default MatchList;
 }
 
