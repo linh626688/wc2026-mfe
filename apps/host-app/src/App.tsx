@@ -4,7 +4,7 @@ import { useAuthStore } from "@worldcup/shared-state";
 import LiveScoreWrapper from './components/LiveScoreWrapper';
 
 const RemoteMatchList = lazy(() => import("remote_matches/MatchList"));
-
+// trigger
 // ─── AppLayout: nằm BÊN TRONG BrowserRouter nên dùng được useNavigate ─────
 // TẠI SAO phải tách ra?
 // → useNavigate() cần BrowserRouter context phía trên nó trong cây component.
