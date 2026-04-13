@@ -1,6 +1,6 @@
 {
-  "buildCommand": "yarn turbo run build --filter=remote-live",
-  "outputDirectory": "apps/remote-live/dist",
+  "buildCommand": "cd ../.. && yarn turbo run build --filter=remote-live",
+  "outputDirectory": "dist",
   "installCommand": "yarn install",
   "headers": [
     {

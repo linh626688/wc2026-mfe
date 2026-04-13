@@ -19,12 +19,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: "yarn"
-      - name: Install dependencies
+      - name: Install dependencies at root
         run: yarn install --frozen-lockfile
       - name: TypeScript compile check
         run: yarn turbo run build --filter=@worldcup/types && npx tsc --noEmit -p apps/remote-matches/tsconfig.app.json
@@ -35,8 +34,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: "yarn"
@@ -49,7 +47,6 @@ jobs:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_REMOTE_MATCHES }}
-          # QUAN TRỌNG: Để gốc là . để Vercel thấy toàn bộ Monorepo (các packages chung)
-          working-directory: .
-          # Chỉ định file config nằm trong subfolder
-          vercel-args: ${{ github.ref == 'refs/heads/main' && '--prod' || '' }} --local-config ./apps/remote-matches/vercel.json
+          # Quay lại dùng folder app làm working directory
+          working-directory: ./apps/remote-matches
+          vercel-args: ${{ github.ref == 'refs/heads/main' && '--prod' || '' }}
