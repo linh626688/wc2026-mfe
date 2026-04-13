@@ -40,6 +40,6 @@ jobs:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_REMOTE_LIVE }}
-          # Quay lại dùng folder app làm working directory
-          working-directory: ./apps/remote-live
-          vercel-args: ${{ github.ref == 'refs/heads/main' && '--prod' || '' }}
+          # Gửi toàn bộ monorepo lên Vercel
+          working-directory: .
+          vercel-args: ${{ github.ref == 'refs/heads/main' && '--prod' || '' }} --local-config ./apps/remote-live/vercel.json

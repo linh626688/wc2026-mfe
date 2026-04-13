@@ -23,7 +23,7 @@ jobs:
         with:
           node-version: "20"
           cache: "yarn"
-      - name: Install dependencies at root
+      - name: Install dependencies
         run: yarn install --frozen-lockfile
       - name: TypeScript compile check
         run: yarn turbo run build --filter=@worldcup/types && npx tsc --noEmit -p apps/remote-matches/tsconfig.app.json
@@ -47,6 +47,7 @@ jobs:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_REMOTE_MATCHES }}
-          # Quay lại dùng folder app làm working directory
-          working-directory: ./apps/remote-matches
-          vercel-args: ${{ github.ref == 'refs/heads/main' && '--prod' || '' }}
+          # PHẢI LÀ GỐC để gửi kèm các thư mục packages/ sang Vercel
+          working-directory: .
+          # Chỉ định config nằm sâu bên trong
+          vercel-args: ${{ github.ref == 'refs/heads/main' && '--prod' || '' }} --local-config ./apps/remote-matches/vercel.json
