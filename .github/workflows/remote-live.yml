@@ -33,10 +33,13 @@ jobs:
           node-version: "20"
           cache: "yarn"
       - run: yarn install --frozen-lockfile
-      - uses: amondnet/vercel-action@v25
+
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_REMOTE_LIVE }}
-          working-directory: ./apps/remote-live
-          vercel-args: ${{ github.ref == 'refs/heads/main' && '--prod' || '' }}
+          # QUAN TRỌNG: Chạy từ gốc Monorepo
+          working-directory: .
+          vercel-args: ${{ github.ref == 'refs/heads/main' && '--prod' || '' }} --local-config ./apps/remote-live/vercel.json
