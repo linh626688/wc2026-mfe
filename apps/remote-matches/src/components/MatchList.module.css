@@ -1,0 +1,130 @@
+/*
+  MatchList.module.css
+  ====================
+  CSS Module: Vite tự động hash tên class khi build.
+  Ví dụ: .container → ._container_abc123 (unique trên toàn trang)
+
+  Không bao giờ xung đột với Host hay các Remote khác,
+  dù tên class có giống nhau đi nữa.
+*/
+
+/* Wrapper ngoài cùng của component */
+.container {
+  padding: 20px;
+  border: 2px solid #3b82f6;
+  border-radius: 10px;
+  margin-top: 16px;
+  background-color: #ffffff;
+  font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e3a5f;
+  margin: 0 0 12px;
+}
+
+/* Thông báo trạng thái login */
+.statusAuth {
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  margin-bottom: 12px;
+}
+
+.statusLoggedIn {
+  background-color: #dcfce7;
+  color: #166534;
+  border: 1px solid #86efac;
+}
+
+.statusGuest {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fca5a5;
+}
+
+/* Danh sách trận đấu */
+.matchList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Mỗi trận đấu */
+.matchItem {
+  width: 100%;
+  padding: 12px 16px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #1e293b;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+.matchItem:hover {
+  background-color: #eff6ff;
+  border-color: #3b82f6;
+}
+
+.matchArrow {
+  color: #94a3b8;
+  font-size: 0.85rem;
+}
+
+/* Trang chi tiết */
+.detailContainer {
+  padding: 20px;
+  font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+}
+
+.backButton {
+  padding: 6px 14px;
+  margin-bottom: 16px;
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid #3b82f6;
+  border-radius: 6px;
+  color: #3b82f6;
+  font-size: 0.9rem;
+  transition: background-color 0.15s;
+}
+
+.backButton:hover {
+  background-color: #eff6ff;
+}
+
+.detailCard {
+  padding: 20px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.detailTeams {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 8px;
+}
+
+.detailMeta {
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.errorText {
+  color: #dc2626;
+  padding: 12px;
+}
