@@ -1,0 +1,70 @@
+name: Deploy remote-matches
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      # Chỉ trigger khi các file này thay đổi
+      # → remote-live thay đổi sẽ KHÔNG trigger workflow này
+      - "apps/remote-matches/**"
+      - "packages/types/**"
+      - "packages/shared-state/**"
+  pull_request:
+    paths:
+      - "apps/remote-matches/**"
+      - "packages/types/**"
+      - "packages/shared-state/**"
+
+jobs:
+  # ─── Job 1: Contract Test ─────────────────────────────────────────────────
+  # Chạy TRƯỚC khi deploy để đảm bảo types không bị breaking change
+  contract-test:
+    name: Contract Test (TypeScript Check)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "yarn"
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: TypeScript compile check (Contract Test)
+        # tsc --noEmit: compile toàn bộ TypeScript nhưng không tạo file output
+        # Nếu props của MatchList không khớp với @worldcup/types → lỗi ở đây
+        # → Deploy bị chặn trước khi gây ra runtime error
+        run: yarn turbo run build --filter=@worldcup/types && npx tsc --noEmit -p apps/remote-matches/tsconfig.app.json
+
+  # ─── Job 2: Deploy ────────────────────────────────────────────────────────
+  deploy:
+    name: Deploy to Vercel
+    needs: contract-test        # Chỉ deploy nếu contract-test PASS
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "yarn"
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_REMOTE_MATCHES }}
+          working-directory: ./apps/remote-matches
+          # production deploy chỉ khi push vào main
+          vercel-args: ${{ github.ref == 'refs/heads/main' && '--prod' || '' }}

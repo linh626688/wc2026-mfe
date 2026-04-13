@@ -87,7 +87,6 @@ function AppLayout() {
         </div>
 
         <aside style={{ width: '350px', backgroundColor: '#222', color: 'white', padding: '15px', borderRadius: '10px' }}>
-          <h3>Live: Vietnam vs Thailand</h3>
           <Suspense fallback="Loading Widget...">
             <LiveScoreWrapper matchId="vie-tha" />
           </Suspense>

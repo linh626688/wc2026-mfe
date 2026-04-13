@@ -1,0 +1,16 @@
+{
+  "buildCommand": "cd ../.. && yarn turbo run build --filter=remote-live",
+  "outputDirectory": "dist",
+  "installCommand": "yarn install",
+  "headers": [
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+name: Deploy host-app
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      # Host rebuild khi chính nó thay đổi HOẶC khi packages chung thay đổi
+      # (packages/types thay đổi → contract có thể vỡ → cần test lại host)
+      - "apps/host-app/**"
+      - "packages/**"
+  pull_request:
+    paths:
+      - "apps/host-app/**"
+      - "packages/**"
+
+jobs:
+  contract-test:
+    name: Contract Test (Host side)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "yarn"
+      - run: yarn install --frozen-lockfile
+
+      # Kiểm tra host-app compile được không với types hiện tại
+      # Nếu remote-matches thêm prop bắt buộc vào @worldcup/types
+      # mà host chưa truyền → lỗi ở đây → không deploy
+      - name: TypeScript check (Contract Test - Host side)
+        run: npx tsc --noEmit -p apps/host-app/tsconfig.app.json
+
+  deploy:
+    name: Deploy Host to Vercel
+    needs: contract-test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "yarn"
+      - run: yarn install --frozen-lockfile
+
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          # Host dùng project ID riêng — khác với remote projects
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_HOST }}
+          working-directory: ./apps/host-app
+          vercel-args: ${{ github.ref == 'refs/heads/main' && '--prod' || '' }}
+        env:
+          # Inject production URLs vào Vercel build environment
+          # Vercel sẽ dùng những giá trị này khi build host-app
+          VITE_REMOTE_MATCHES_URL: ${{ secrets.PROD_REMOTE_MATCHES_URL }}
+          VITE_REMOTE_LIVE_URL: ${{ secrets.PROD_REMOTE_LIVE_URL }}

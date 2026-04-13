@@ -1,10 +1,19 @@
-import { createApp } from "vue";
-import "./style.css";
-import App from "./App.vue";
 import { defineCustomElement } from "vue";
 import LiveScore from "./LiveScore.ce.vue";
 
-createApp(App).mount("#app");
-
+// Chuyển đối file Vue thành một Custom Element constructor của Vue
 const LiveScoreElement = defineCustomElement(LiveScore);
-customElements.define("wc-live-score", LiveScoreElement);
+
+// Hàm đăng ký thẻ
+export function register() {
+  if (!customElements.get("wc-live-score")) {
+    customElements.define("wc-live-score", LiveScoreElement);
+    console.log("Web Component 'wc-live-score' registered successfully");
+  }
+}
+
+// Tự động chạy khi được load qua script tag hoặc module import
+register();
+
+// Export constructor để dùng nếu cần
+export default LiveScoreElement;

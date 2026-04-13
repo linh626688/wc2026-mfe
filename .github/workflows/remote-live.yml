@@ -1,0 +1,42 @@
+name: Deploy remote-live
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - "apps/remote-live/**"
+  pull_request:
+    paths:
+      - "apps/remote-live/**"
+
+jobs:
+  contract-test:
+    name: TypeScript Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "yarn"
+      - run: yarn install --frozen-lockfile
+      - run: npx tsc --noEmit -p apps/remote-live/tsconfig.app.json
+
+  deploy:
+    name: Deploy to Vercel
+    needs: contract-test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "yarn"
+      - run: yarn install --frozen-lockfile
+      - uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_REMOTE_LIVE }}
+          working-directory: ./apps/remote-live
+          vercel-args: ${{ github.ref == 'refs/heads/main' && '--prod' || '' }}
