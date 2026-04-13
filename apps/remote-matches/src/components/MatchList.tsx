@@ -10,7 +10,7 @@ import styles from "./MatchList.module.css";
 // ─── Mock data ────────────────────────────────────────────────────────────
 const MATCHES: Match[] = [
   { id: "vie-tha", home: "🇻🇳 Vietnam", away: "🇹🇭 Thailand" },
-  { id: "jpn-kor", home: "🇯🇵 Japan",   away: "🇰🇷 South Korea" },
+  { id: "jpn-kor", home: "🇯🇵 Japan", away: "🇰🇷 South Korea" },
 ];
 
 type PageProps = Pick<MatchListProps, "onNavigate">;
@@ -29,7 +29,7 @@ function MatchListPage({ onNavigate }: PageProps) {
     // Dùng styles.container thay vì style={{...}} inline
     // → CSS nằm trong file .module.css, dễ maintain hơn
     <div className={styles.container}>
-      <h2 className={styles.title}>⚽ Lịch Thi Đấu World Cup 2026</h2>
+      <h2 className={styles.title}>⚽ Lịch Thi Đấu World Cup 2026 trigger action</h2>
 
       {user ? (
         // Kết hợp 2 class: statusAuth (base) + statusLoggedIn (modifier)
