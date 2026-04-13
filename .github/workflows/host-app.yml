@@ -42,9 +42,10 @@ jobs:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_HOST }}
-          # Gửi toàn bộ monorepo lên Vercel để lấy đủ các package dùng chung
           working-directory: .
-          vercel-args: ${{ github.ref == 'refs/heads/main' && '--prod' || '' }} --local-config ./apps/host-app/vercel.json
-        env:
-          VITE_REMOTE_MATCHES_URL: ${{ secrets.PROD_REMOTE_MATCHES_URL }}
-          VITE_REMOTE_LIVE_URL: ${{ secrets.PROD_REMOTE_LIVE_URL }}
+          # SỬA Ở ĐÂY: Dùng -b để truyền biến môi trường vào quá trình Build của Vercel
+          vercel-args: >
+            ${{ github.ref == 'refs/heads/main' && '--prod' || '' }} 
+            --local-config ./apps/host-app/vercel.json
+            -b VITE_REMOTE_MATCHES_URL="${{ secrets.PROD_REMOTE_MATCHES_URL }}"
+            -b VITE_REMOTE_LIVE_URL="${{ secrets.PROD_REMOTE_LIVE_URL }}"
