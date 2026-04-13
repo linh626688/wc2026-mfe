@@ -1,6 +1,6 @@
 {
-  "buildCommand": "cd ../.. && yarn turbo run build --filter=remote-matches",
-  "outputDirectory": "dist",
+  "buildCommand": "yarn turbo run build --filter=remote-matches",
+  "outputDirectory": "apps/remote-matches/dist",
   "installCommand": "yarn install",
   "headers": [
     {
