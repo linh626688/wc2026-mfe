@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@repo/ui": "*",
+    "@worldcup/ui-component": "*",
     "vue": "^3.5.32"
   },
   "devDependencies": {

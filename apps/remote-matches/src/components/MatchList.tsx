@@ -1,8 +1,8 @@
 import { MemoryRouter, Routes, Route, useNavigate, useParams } from "react-router-dom";
 import { useAuthStore } from "@worldcup/shared-state";
 import type { MatchListProps, Match } from "@worldcup/types";
-import { Button, Card, Badge, Heading, Text, Code } from "@repo/ui";
-import "@repo/ui/design-system.css";
+import { Button, Card, Badge, Heading, Text, Code } from "@worldcup/ui-component";
+import "@worldcup/ui-component/design-system.css";
 
 // Import CSS Module
 // Vite tự động hash tên class: .container → ._container_abc123

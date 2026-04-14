@@ -2,8 +2,8 @@ import { lazy, Suspense, useState } from "react";
 import { BrowserRouter, Routes, Route, Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuthStore } from "@worldcup/shared-state";
 import LiveScoreWrapper from './components/LiveScoreWrapper';
-import { Button, Heading, Text, Card } from "@repo/ui";
-import "@repo/ui/design-system.css";
+import { Button, Heading, Text, Card } from "@worldcup/ui-component";
+import "@worldcup/ui-component/design-system.css";
 
 const RemoteMatchList = lazy(() => import("remote_matches/MatchList"));
 // trigger

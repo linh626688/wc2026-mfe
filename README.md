@@ -1,159 +1,86 @@
-# Turborepo starter
+# 🏆 World Cup 2026 Microfrontend Dashboard
 
-This Turborepo starter is maintained by the Turborepo core team.
+Hệ thống Dashboard quản lý và theo dõi giải vô địch bóng đá thế giới 2026, được xây dựng trên kiến trúc **Microfrontend (MFE)** hiện đại, sử dụng **Vite Module Federation** và **Turborepo**.
 
-## Using this example
+---
 
-Run the following command:
+## 🏗️ Kiến trúc Hệ thống (Architecture Breakdown)
 
-```sh
-npx create-turbo@latest
+Hệ thống được thiết kế theo mô hình Monorepo với các tầng tách biệt rõ ràng:
+
+### 1. Apps (Microfrontends)
+-   **`host-app` (React)**: "Bộ não" điều phối. Quản lý Header, Menu, Auth State và đóng vai trò Container để nhúng các Remotes.
+-   **`remote-matches` (React)**: Module quản lý lịch thi đấu. Sử dụng `MemoryRouter` để điều hướng nội bộ mà không làm hỏng URL của Host.
+-   **`remote-live` (Vue)**: Module tỉ số trực tuyến. Được đóng gói dưới dạng **Web Component (Custom Element)** để đảm bảo tính cô lập tuyệt đối (Shadow DOM).
+
+### 2. Shared Packages (The Glue)
+-   **`@worldcup/ui-component`**: Thư viện UI dùng chung được xây dựng theo **Atomic Design**. Đảm bảo tính nhất quán (Consistent Design) trên toàn hệ thống.
+-   **`@worldcup/shared-state`**: Quản lý trạng thái chung (User, Theme) sử dụng **Zustand**.
+-   **`@worldcup/types`**: Định nghĩa TypeScript tập trung, đóng vai trò là "Contract" (Hợp đồng dữ liệu) giữa các MFE.
+
+---
+
+## 🚀 Tính năng nổi bật đã triển khai
+
+### 1. Independent Deployment (Triển khai độc lập)
+-   Mỗi MFE có một Pipeline CI/CD riêng trên **GitHub Actions**.
+-   Cơ chế **Path-based triggering**: Chỉ deploy module nào có sự thay đổi code thực sự, giúp tiết kiệm thời gian và tài nguyên.
+-   Tự động Inject Production URL vào Host thông qua Environment Variables.
+
+### 2. Contract Testing
+-   Hệ thống CI tích hợp bước kiểm tra kiểu (**TypeScript Compile Check**) xuyên qua các package. 
+-   Nếu một thay đổi ở `packages/types` gây lỗi cho bất kỳ MFE nào, Pipeline sẽ báo đỏ và chặn quá trình deploy.
+
+### 3. CSS Isolation (Cô lập giao diện)
+-   Sử dụng **CSS Modules** cho React Remotes.
+-   Sử dụng **Shadow DOM** cho Vue Remotes.
+-   Hệ thống **CSS Tokens** giúp đồng bộ màu sắc/typography nhưng vẫn giữ được sự độc lập về layout.
+
+---
+
+## 🛠️ Hướng dẫn vận hành
+
+### Chạy Local (Development)
+```bash
+# Cài đặt toàn bộ dependencies
+yarn install
+
+# Khởi chạy tất cả module cùng lúc
+yarn dev
 ```
 
-## What's inside?
+### Build & Preview (Production simulation)
+```bash
+# Build tất cả apps và packages
+yarn build
 
-This Turborepo includes the following packages/apps:
-
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo build
+# Xem thử kết quả build
+yarn preview
 ```
 
-Without global `turbo`, use your package manager:
+---
 
-```sh
-cd my-turborepo
-npx turbo build
-yarn dlx turbo build
-yarn exec turbo build
+## 🌐 Sơ đồ luồng điều hướng (Routing Sync)
+
+```mermaid
+sequenceDiagram
+    participant Browser
+    participant Host (BrowserRouter)
+    participant Remote (MemoryRouter)
+
+    Browser->>Host: Truy cập /matches/detail/1
+    Host->>Remote: Truyền initialPath="/detail/1"
+    Remote->>Remote: Render trang chi tiết trận đấu
+    Remote->>Host: Gọi onNavigate("/matches/setting")
+    Host->>Browser: Update thanh địa chỉ URL
 ```
 
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+---
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+## 📋 Danh sách công việc tiếp theo (Roadmap)
+- [ ] Tích hợp **TanStack Query** để quản lý Server State.
+- [ ] Triển khai **Error Boundaries** để Host không bị sập khi một Remote bị lỗi.
+- [ ] Viết **E2E Smoke Tests** bằng Playwright để kiểm tra luồng tích hợp giữa các MFE.
 
-```sh
-turbo build --filter=docs
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-yarn exec turbo build --filter=docs
-```
-
-### Develop
-
-To develop all apps and packages, run the following command:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo dev
-```
-
-Without global `turbo`, use your package manager:
-
-```sh
-cd my-turborepo
-npx turbo dev
-yarn exec turbo dev
-yarn exec turbo dev
-```
-
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo dev --filter=web
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-yarn exec turbo dev --filter=web
-```
-
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo login
-```
-
-Without global `turbo`, use your package manager:
-
-```sh
-cd my-turborepo
-npx turbo login
-yarn exec turbo login
-yarn exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo link
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo link
-yarn exec turbo link
-yarn exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+---
+*Dự án được thực hiện bởi Antigravity Pair Programming Team.*
