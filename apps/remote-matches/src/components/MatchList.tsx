@@ -1,6 +1,8 @@
 import { MemoryRouter, Routes, Route, useNavigate, useParams } from "react-router-dom";
 import { useAuthStore } from "@worldcup/shared-state";
 import type { MatchListProps, Match } from "@worldcup/types";
+import { Button, Card, Badge, Heading, Text, Code } from "@repo/ui";
+import "@repo/ui/design-system.css";
 
 // Import CSS Module
 // Vite tự động hash tên class: .container → ._container_abc123
@@ -29,32 +31,32 @@ function MatchListPage({ onNavigate }: PageProps) {
     // Dùng styles.container thay vì style={{...}} inline
     // → CSS nằm trong file .module.css, dễ maintain hơn
     <div className={styles.container}>
-      <h2 className={styles.title}>⚽ Lịch Thi Đấu World Cup 2026 trigger action</h2>
+      <Heading size="section" className={styles.title}>⚽ Lịch Thi Đấu World Cup 2026</Heading>
 
       {user ? (
-        // Kết hợp 2 class: statusAuth (base) + statusLoggedIn (modifier)
-        <p className={`${styles.statusAuth} ${styles.statusLoggedIn}`}>
-          ✓ Đã đồng bộ: <b>{user.name}</b>
-        </p>
+        <Badge variant="green" className={styles.badge}>
+          ✓ Đã đồng bộ: {user.name}
+        </Badge>
       ) : (
-        <p className={`${styles.statusAuth} ${styles.statusGuest}`}>
+        <Badge variant="orange" className={styles.badge}>
           ⚠ Vui lòng đăng nhập để xem chi tiết.
-        </p>
+        </Badge>
       )}
 
-      <ul className={styles.matchList}>
+      <div className="notion-grid">
         {MATCHES.map((match) => (
-          <li key={match.id}>
-            <button
-              className={styles.matchItem}
-              onClick={() => handleMatchClick(match.id)}
-            >
-              <span>{match.home} vs {match.away}</span>
-              <span className={styles.matchArrow}>→</span>
-            </button>
-          </li>
+          <div key={match.id}>
+            <Card variant="standard" title={`${match.home} vs ${match.away}`} className={styles.matchCard}>
+              <Button 
+                variant="pill" 
+                onClick={() => handleMatchClick(match.id)}
+              >
+                View Details →
+              </Button>
+            </Card>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }
@@ -72,23 +74,23 @@ function MatchDetail({ onNavigate }: PageProps) {
 
   return (
     <div className={styles.detailContainer}>
-      <button className={styles.backButton} onClick={handleBack}>
+      <Button variant="ghost" onClick={handleBack} className={styles.backButton}>
         ← Quay lại
-      </button>
+      </Button>
 
       {match ? (
-        <div className={styles.detailCard}>
-          <p className={styles.detailTeams}>
-            {match.home} vs {match.away}
-          </p>
-          <p className={styles.detailMeta}>
-            Match ID: <code>{matchId}</code>
-          </p>
-        </div>
+        <Card variant="featured" title={`${match.home} vs ${match.away}`}>
+          <Text color="secondary">
+            Match ID: <Code>{matchId}</Code>
+          </Text>
+          <div style={{ marginTop: '24px' }}>
+             <Badge variant="blue">Confirmed</Badge>
+          </div>
+        </Card>
       ) : (
-        <p className={styles.errorText}>
+        <Text color="secondary">
           ❌ Không tìm thấy trận đấu: {matchId}
-        </p>
+        </Text>
       )}
     </div>
   );

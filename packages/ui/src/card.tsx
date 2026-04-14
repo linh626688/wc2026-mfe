@@ -1,27 +1,27 @@
-import { type JSX } from "react";
+import * as React from "react";
+import "./design-system.css";
 
-export function Card({
-  className,
-  title,
-  children,
-  href,
-}: {
-  className?: string;
-  title: string;
+interface CardProps {
   children: React.ReactNode;
-  href: string;
-}): JSX.Element {
-  return (
-    <a
-      className={className}
-      href={`${href}?utm_source=create-turbo&utm_medium=basic&utm_campaign=create-turbo"`}
-      rel="noopener noreferrer"
-      target="_blank"
-    >
-      <h2>
-        {title} <span>-&gt;</span>
-      </h2>
-      <p>{children}</p>
-    </a>
-  );
+  title?: string;
+  className?: string;
+  variant?: "standard" | "featured";
 }
+
+export const Card = ({
+  children,
+  title,
+  className = "",
+  variant = "standard"
+}: CardProps) => {
+  const variantClass = variant === "featured" ? "notion-card-featured" : "notion-card-standard";
+
+  return (
+    <div className={`notion-card ${variantClass} ${className}`}>
+      {title && <h3 className="heading-card notion-card-title">{title}</h3>}
+      <div className="notion-card-content">
+        {children}
+      </div>
+    </div>
+  );
+};

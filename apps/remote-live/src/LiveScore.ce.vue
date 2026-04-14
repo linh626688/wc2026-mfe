@@ -36,12 +36,14 @@ const matchData = computed(() => {
 
 <style>
 /* 
-  :host là selector đặc biệt để style cho chính thẻ <wc-live-score> 
-  từ bên trong Shadow DOM. 
+  Shadow DOM Isolation: 
+  CSS Variables (Tokens) xuyên qua được Shadow DOM.
+  Mọi mã màu ở đây đều lấy từ packages/ui/src/design-system.css
 */
 :host {
   display: block;
-  margin-bottom: 10px;
+  margin-bottom: 0;
+  width: 100%;
 }
 
 .live-widget {
@@ -49,24 +51,27 @@ const matchData = computed(() => {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  background-color: #1a1a1a; /* Quay lại màu tối cho chuyên nghiệp */
-  color: white;
-  padding: 10px 16px;
-  border-radius: 12px;
-  font-family: Inter, system-ui, sans-serif;
-  border: 1px solid #333;
+  background-color: var(--color-notion-black);
+  color: var(--color-pure-white);
+  padding: 12px 16px;
+  border-radius: var(--radius-comfortable);
+  font-family: var(--font-family);
+  box-shadow: var(--shadow-deep);
+  border: var(--border-whisper);
 }
 
 .live-status {
   display: flex;
   align-items: center;
-  gap: 4px;
-  font-size: 0.75rem;
-  font-weight: bold;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
 }
 
 .blinking {
-  animation: blink 1s infinite;
+  color: #ff4d4f;
+  animation: blink 1.2s infinite;
 }
 
 .match-info {
@@ -77,23 +82,33 @@ const matchData = computed(() => {
 }
 
 .teams {
-  font-size: 0.8rem;
-  color: #aaa;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-warm-gray-300);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .score {
-  font-size: 1.1rem;
-  font-weight: bold;
-  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-pure-white);
+  line-height: 1.2;
 }
 
 .time {
-  color: #4ade80;
-  font-weight: bold;
-  font-family: monospace;
+  color: var(--color-green);
+  font-weight: 700;
+  font-family: var(--mono, monospace);
+  background: rgba(26, 174, 57, 0.1);
+  padding: 2px 8px;
+  border-radius: var(--radius-micro);
+  font-size: 13px;
 }
 
 @keyframes blink {
-  50% { opacity: 0 }
+  0% { opacity: 1 }
+  50% { opacity: 0.3 }
+  100% { opacity: 1 }
 }
 </style>

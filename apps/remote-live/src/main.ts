@@ -1,4 +1,5 @@
 import { defineCustomElement } from "vue";
+import "@repo/ui/design-system.css";
 import LiveScore from "./LiveScore.ce.vue";
 
 // Chuyển đối file Vue thành một Custom Element constructor của Vue

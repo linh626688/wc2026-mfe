@@ -1,11 +1,12 @@
-import { type JSX } from "react";
+import * as React from "react";
+import "./design-system.css";
 
 export function Code({
   children,
-  className,
+  className = "",
 }: {
   children: React.ReactNode;
   className?: string;
-}): JSX.Element {
-  return <code className={className}>{children}</code>;
+}): React.JSX.Element {
+  return <code className={`notion-code ${className}`}>{children}</code>;
 }
