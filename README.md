@@ -89,15 +89,22 @@ During the development of this architecture, several critical issues were encoun
 
 ## 🛠 Local Development Setup
 
-To run the entire Microfrontend infrastructure locally:
+To run the entire Microfrontend infrastructure locally, note that `vite-plugin-federation` requires remote applications to be built and served via `preview` to correctly expose `remoteEntry.js`.
 
 ```bash
 # 1. Install dependencies (Workspace root)
 yarn install
 
-# 2. Start all applications concurrently
-# This will spawn the Host (5000), Matches (5001), and Live (5002)
-yarn dev
+# 2. Build the remote modules (along with packages)
+yarn build
+
+# 3. Open two separate terminals to run the servers:
+
+# Terminal A: Serve the remote applications via preview (Ports: 5001, 5002)
+yarn turbo run preview --filter=remote-matches --filter=remote-live
+
+# Terminal B: Start the Host application in development mode (Port: 5000)
+yarn turbo run dev --filter=host-app
 ```
 
 Visit `http://localhost:5000` to interact with the full system.
