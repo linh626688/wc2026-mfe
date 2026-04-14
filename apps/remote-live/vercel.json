@@ -1,16 +1,5 @@
 {
   "buildCommand": "yarn turbo run build --filter=remote-live",
   "outputDirectory": "apps/remote-live/dist",
-  "installCommand": "yarn install",
-  "headers": [
-    {
-      "source": "/assets/(.*)",
-      "headers": [
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "*"
-        }
-      ]
-    }
-  ]
+  "framework": "vite"
 }

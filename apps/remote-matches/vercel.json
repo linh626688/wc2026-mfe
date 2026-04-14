@@ -1,16 +1,5 @@
 {
   "buildCommand": "yarn turbo run build --filter=remote-matches",
   "outputDirectory": "apps/remote-matches/dist",
-  "installCommand": "yarn install",
-  "headers": [
-    {
-      "source": "/assets/(.*)",
-      "headers": [
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "*"
-        }
-      ]
-    }
-  ]
+  "framework": "vite"
 }

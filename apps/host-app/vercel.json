@@ -1,5 +1,5 @@
 {
   "buildCommand": "yarn turbo run build --filter=host-app",
   "outputDirectory": "apps/host-app/dist",
-  "installCommand": "yarn install"
+  "framework": "vite"
 }
