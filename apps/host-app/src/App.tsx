@@ -7,23 +7,23 @@ import "@worldcup/ui-component/design-system.css";
 
 const RemoteMatchList = lazy(() => import("remote_matches/MatchList"));
 // trigger
-// ─── AppLayout: nằm BÊN TRONG BrowserRouter nên dùng được useNavigate ─────
-// TẠI SAO phải tách ra?
-// → useNavigate() cần BrowserRouter context phía trên nó trong cây component.
-// → Nếu gọi useNavigate() trong App() cùng chỗ có <BrowserRouter> → lỗi:
+// ─── AppLayout: inside BrowserRouter so we can use useNavigate ─────
+// WHY separate this?
+// → useNavigate() requires a Router context above it in the component tree.
+// → If we call useNavigate() in App() where <BrowserRouter> is defined → error:
 //   "useNavigate() may be used only in the context of a <Router>"
 function AppLayout() {
   const { user, login, logout } = useAuthStore();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  // useNavigate: lấy hàm để thay đổi URL trình duyệt
+  // useNavigate: get function to change browser URL
   const navigate = useNavigate();
 
-  // useLocation: đọc URL hiện tại
-  // Dùng để tính initialPath truyền xuống Remote (deep link)
+  // useLocation: reading current URL
+  // Used to calculate initialPath to pass down to Remote (deep link)
   const location = useLocation();
 
-  // Tính initialPath cho MemoryRouter của Remote:
+  // Calculate initialPath for MemoryRouter inside Remote:
   // Host URL: /matches/vie-tha → Remote initialPath: /vie-tha
   // Host URL: /matches         → Remote initialPath: /
   const getInitialPath = () => {
@@ -63,11 +63,11 @@ function AppLayout() {
               {user ? (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                   <Text weight={500}>👤 {user.name}</Text>
-                  <Button variant="secondary" onClick={logout}>Đăng xuất</Button>
+                  <Button variant="secondary" onClick={logout}>Logout</Button>
                 </div>
               ) : (
                 <Button variant="primary" onClick={() => login({ name: "Jone Doe", role: "admin" })}>
-                  Đăng nhập
+                  Login
                 </Button>
               )}
             </div>
@@ -111,11 +111,11 @@ function AppLayout() {
               {user ? (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                   <Text weight={500}>👤 {user.name}</Text>
-                  <Button variant="secondary" onClick={logout}>Đăng xuất</Button>
+                  <Button variant="secondary" onClick={logout}>Logout</Button>
                 </div>
               ) : (
                 <Button variant="primary" onClick={() => login({ name: "Jone Doe", role: "admin" })}>
-                  Đăng nhập
+                  Login
                 </Button>
               )}
             </div>
@@ -129,17 +129,17 @@ function AppLayout() {
             <Card variant="standard">
               <Routes>
                 <Route path="/" element={
-                  <p style={{ color: '#888' }}>👈 Chọn "Lịch thi đấu" từ menu để bắt đầu</p>
+                  <p style={{ color: '#888' }}>👈 Select "Matches" from the menu to start</p>
                 } />
 
                 <Route path="/matches/*" element={
-                  <Suspense fallback={<p>Đang tải lịch thi đấu...</p>}>
+                  <Suspense fallback={<p>Loading matches...</p>}>
                     {/*
-                  onNavigate: khi Remote điều hướng nội bộ,
-                  nó gọi callback này → Host cập nhật URL thật
+                  onNavigate: when Remote navigates internally,
+                  it calls this callback → Host updates the real URL
 
-                  initialPath: truyền đoạn path sau "/matches" xuống
-                  để MemoryRouter của Remote bắt đầu đúng chỗ (deep link)
+                  initialPath: pass the path segment after "/matches" down
+                  so MemoryRouter of Remote starts at the right place (deep link)
                 */}
                     <RemoteMatchList
                       key={location.pathname}
@@ -167,7 +167,7 @@ function AppLayout() {
   );
 }
 
-// ─── App: chỉ bao BrowserRouter, không có logic ───────────────────────────
+// ─── App: only wraps BrowserRouter, no logic ───────────────────────────
 function App() {
   return (
     <BrowserRouter>

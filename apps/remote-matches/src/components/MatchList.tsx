@@ -5,8 +5,8 @@ import { Button, Card, Badge, Heading, Text, Code } from "@worldcup/ui-component
 import "@worldcup/ui-component/design-system.css";
 
 // Import CSS Module
-// Vite tự động hash tên class: .container → ._container_abc123
-// Đảm bảo không bao giờ conflict với Host hay Remote khác
+// Vite automatically hashes class names: .container → ._container_abc123
+// Ensures no conflict with Host or other Remotes
 import styles from "./MatchList.module.css";
 
 // ─── Mock data ────────────────────────────────────────────────────────────
@@ -17,7 +17,7 @@ const MATCHES: Match[] = [
 
 type PageProps = Pick<MatchListProps, "onNavigate">;
 
-// ─── Trang danh sách ──────────────────────────────────────────────────────
+// ─── List Page ──────────────────────────────────────────────────────
 function MatchListPage({ onNavigate }: PageProps) {
   const { user } = useAuthStore();
   const navigate = useNavigate();
@@ -28,18 +28,18 @@ function MatchListPage({ onNavigate }: PageProps) {
   };
 
   return (
-    // Dùng styles.container thay vì style={{...}} inline
-    // → CSS nằm trong file .module.css, dễ maintain hơn
+    // Use styles.container instead of inline style={{...}}
+    // → CSS is in .module.css file, easier to maintain
     <div className={styles.container}>
-      <Heading size="section" className={styles.title}>⚽ Lịch Thi Đấu World Cup 2026</Heading>
+      <Heading size="section" className={styles.title}>⚽ World Cup 2026 Matches</Heading>
 
       {user ? (
         <Badge variant="green" className={styles.badge}>
-          ✓ Đã đồng bộ: {user.name}
+          ✓ Synced: {user.name}
         </Badge>
       ) : (
         <Badge variant="orange" className={styles.badge}>
-          ⚠ Vui lòng đăng nhập để xem chi tiết.
+          ⚠ Please login to view details.
         </Badge>
       )}
 
@@ -61,7 +61,7 @@ function MatchListPage({ onNavigate }: PageProps) {
   );
 }
 
-// ─── Trang chi tiết ───────────────────────────────────────────────────────
+// ─── Detail Page ───────────────────────────────────────────────────────
 function MatchDetail({ onNavigate }: PageProps) {
   const { matchId } = useParams<{ matchId: string }>();
   const navigate = useNavigate();
@@ -75,7 +75,7 @@ function MatchDetail({ onNavigate }: PageProps) {
   return (
     <div className={styles.detailContainer}>
       <Button variant="ghost" onClick={handleBack} className={styles.backButton}>
-        ← Quay lại
+        ← Back
       </Button>
 
       {match ? (
@@ -89,14 +89,14 @@ function MatchDetail({ onNavigate }: PageProps) {
         </Card>
       ) : (
         <Text color="secondary">
-          ❌ Không tìm thấy trận đấu: {matchId}
+          ❌ Match not found: {matchId}
         </Text>
       )}
     </div>
   );
 }
 
-// ─── Component chính được export cho Host ─────────────────────────────────
+// ─── Main component exported to Host ─────────────────────────────────
 export default function MatchList({ onNavigate, initialPath = "/" }: MatchListProps) {
   return (
     <MemoryRouter initialEntries={[initialPath]}>

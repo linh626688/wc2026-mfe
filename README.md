@@ -1,86 +1,103 @@
-# 🏆 World Cup 2026 Microfrontend Dashboard
+# 🏆 World Cup 2026 Admin Dashboard
 
-Hệ thống Dashboard quản lý và theo dõi giải vô địch bóng đá thế giới 2026, được xây dựng trên kiến trúc **Microfrontend (MFE)** hiện đại, sử dụng **Vite Module Federation** và **Turborepo**.
+A production-ready Microfrontend (MFE) architecture built with **React**, **Vue**, **Vite**, and **Module Federation**. This project demonstrates how to orchestrate multiple independent applications within a single monorepo, sharing state, UI components, and TypeScript definitions while deploying seamlessly to **Vercel** via **GitHub Actions**.
 
----
+## 🏗 Microfrontend Architecture
 
-## 🏗️ Kiến trúc Hệ thống (Architecture Breakdown)
+The system is composed of a **Host Application** and multiple **Remote Applications**, all residing within a Yarn workspaces monorepo.
 
-Hệ thống được thiết kế theo mô hình Monorepo với các tầng tách biệt rõ ràng:
+```mermaid
+graph TD
+    subgraph Monorepo
+        subgraph Packages
+            UI["@worldcup/ui-component\n(Design System)"]
+            State["@worldcup/shared-state\n(Zustand + Auth)"]
+            Types["@worldcup/types\n(TypeScript Interfaces)"]
+        end
 
-### 1. Apps (Microfrontends)
--   **`host-app` (React)**: "Bộ não" điều phối. Quản lý Header, Menu, Auth State và đóng vai trò Container để nhúng các Remotes.
--   **`remote-matches` (React)**: Module quản lý lịch thi đấu. Sử dụng `MemoryRouter` để điều hướng nội bộ mà không làm hỏng URL của Host.
--   **`remote-live` (Vue)**: Module tỉ số trực tuyến. Được đóng gói dưới dạng **Web Component (Custom Element)** để đảm bảo tính cô lập tuyệt đối (Shadow DOM).
+        subgraph Applications
+            Host["Host App (React)\nport: 5000"]
+            Matches["Remote Matches (React)\nport: 5001"]
+            Live["Remote Live (Vue Web Component)\nport: 5002"]
+        end
+    end
 
-### 2. Shared Packages (The Glue)
--   **`@worldcup/ui-component`**: Thư viện UI dùng chung được xây dựng theo **Atomic Design**. Đảm bảo tính nhất quán (Consistent Design) trên toàn hệ thống.
--   **`@worldcup/shared-state`**: Quản lý trạng thái chung (User, Theme) sử dụng **Zustand**.
--   **`@worldcup/types`**: Định nghĩa TypeScript tập trung, đóng vai trò là "Contract" (Hợp đồng dữ liệu) giữa các MFE.
+    %% Dependencies
+    Host --> UI
+    Host --> State
+    Matches --> UI
+    Matches --> State
+    Matches --> Types
+    Live --> UI
 
----
-
-## 🚀 Tính năng nổi bật đã triển khai
-
-### 1. Independent Deployment (Triển khai độc lập)
--   Mỗi MFE có một Pipeline CI/CD riêng trên **GitHub Actions**.
--   Cơ chế **Path-based triggering**: Chỉ deploy module nào có sự thay đổi code thực sự, giúp tiết kiệm thời gian và tài nguyên.
--   Tự động Inject Production URL vào Host thông qua Environment Variables.
-
-### 2. Contract Testing
--   Hệ thống CI tích hợp bước kiểm tra kiểu (**TypeScript Compile Check**) xuyên qua các package. 
--   Nếu một thay đổi ở `packages/types` gây lỗi cho bất kỳ MFE nào, Pipeline sẽ báo đỏ và chặn quá trình deploy.
-
-### 3. CSS Isolation (Cô lập giao diện)
--   Sử dụng **CSS Modules** cho React Remotes.
--   Sử dụng **Shadow DOM** cho Vue Remotes.
--   Hệ thống **CSS Tokens** giúp đồng bộ màu sắc/typography nhưng vẫn giữ được sự độc lập về layout.
-
----
-
-## 🛠️ Hướng dẫn vận hành
-
-### Chạy Local (Development)
-```bash
-# Cài đặt toàn bộ dependencies
-yarn install
-
-# Khởi chạy tất cả module cùng lúc
-yarn dev
+    %% Microfrontend Federation
+    Host -. "Dynamic Import\n(Module Federation)" .-> Matches
+    Host -. "Dynamic Import\n(Custom Element)" .-> Live
 ```
 
-### Build & Preview (Production simulation)
-```bash
-# Build tất cả apps và packages
-yarn build
+### Application Boundaries
 
-# Xem thử kết quả build
-yarn preview
-```
+1.  **Host App** (`apps/host-app`): The main shell. It handles routing, global layout, and orchestrates the loading of remote modules.
+2.  **Remote Matches** (`apps/remote-matches`): A standard React remote application. It exposes a complex routing system (`MatchList`) that the Host integrates transparently.
+3.  **Remote Live** (`apps/remote-live`): A Vue 3 application compiled into a standard Web Component (`<wc-live-score>`). It demonstrates true framework-agnostic microfrontends through the Custom Elements API and Shadow DOM isolation.
 
----
+## 🚀 CI/CD Pre-built Deployment Architecture
 
-## 🌐 Sơ đồ luồng điều hướng (Routing Sync)
+One of the most complex challenges in monorepos is deploying sub-applications that depend on local workspace packages. We utilize a **"Pre-built on GitHub Actions"** strategy to solve Vercel build context limits.
 
 ```mermaid
 sequenceDiagram
-    participant Browser
-    participant Host (BrowserRouter)
-    participant Remote (MemoryRouter)
+    participant Dev as Developer
+    participant GH as GitHub Actions
+    participant Vercel as Vercel Edge
 
-    Browser->>Host: Truy cập /matches/detail/1
-    Host->>Remote: Truyền initialPath="/detail/1"
-    Remote->>Remote: Render trang chi tiết trận đấu
-    Remote->>Host: Gọi onNavigate("/matches/setting")
-    Host->>Browser: Update thanh địa chỉ URL
+    Dev->>GH: Push to main (or Manual Trigger)
+    GH->>GH: Checkout Monorepo
+    GH->>GH: `yarn install` (Symlinks packages)
+    GH->>GH: Inject Environment Variables
+    Note right of GH: VITE_REMOTE_MATCHES_URL<br/>VITE_REMOTE_LIVE_URL
+    GH->>GH: `turbo run build`
+    Note right of GH: Compiles apps/*/dist/ with<br/>all internal dependencies
+    GH->>Vercel: Deploy Output (`amondnet/vercel-action`)
+    Note over Vercel: Skips build process (no-op).<br/>Only uploads static files to CDN.
+    Vercel-->>Dev: Production URL Ready
 ```
 
----
+## 🧠 Lessons Learned & Technical Solutions
 
-## 📋 Danh sách công việc tiếp theo (Roadmap)
-- [ ] Tích hợp **TanStack Query** để quản lý Server State.
-- [ ] Triển khai **Error Boundaries** để Host không bị sập khi một Remote bị lỗi.
-- [ ] Viết **E2E Smoke Tests** bằng Playwright để kiểm tra luồng tích hợp giữa các MFE.
+During the development of this architecture, several critical issues were encountered and resolved.
 
----
-*Dự án được thực hiện bởi Antigravity Pair Programming Team.*
+### 1. Monorepo Dependency Resolution on Vercel
+**The Problem:** Vercel deployments failed with "Cannot find module `@worldcup/ui-component`". Vercel's isolated build environments for individual sub-directories couldn't naturally resolve the hoisting and symlinking of the monorepo's root packages.
+**The Solution:** We bypassed Vercel's internal build step. Instead, we compile the applications using Turborepo inside **GitHub Actions** (where the full monorepo context is available). We then deploy the already compiled `dist/` folders directly to Vercel.
+
+### 2. Vite Environment Variable Overrides
+**The Problem:** The production URLs for the remotes were constantly falling back to `localhost:5001`. Vite's `loadEnv()` reads from `.env.production` unconditionally, which overwrote the dynamic `process.env` variables injected via GitHub Secrets.
+**The Solution:** Removed `loadEnv()` reliance for dynamic CI/CD variables. We explicitly map `process.env.VITE_REMOTE_MATCHES_URL` directly inside `vite.config.ts`, ensuring that GitHub Actions can securely inject environment details at build time without them being clobbered by empty `.env` files.
+
+### 3. Cross-Framework CSS Isolation
+**The Problem:** Global CSS from the Host App was conflicting with the styles of the remote modules. Attempting to manage complex Vite aliases for shared CSS caused "Configuration Hell".
+**The Solution:** 
+- **React Remotes:** Enforced the strict use of CSS Modules (`*.module.css`) to automatically hash classes (e.g., `._container_abc123`).
+- **Vue Remotes:** Packaged the Vue component as a Web Component using `defineCustomElement`. This inherently utilizes the **Shadow DOM**, completely isolating its CSS from the React Host, while still allowing the intake of global CSS token variables.
+
+### 4. React Router Context inside Remote Apps
+**The Problem:** Calling `useNavigate()` inside the Host app immediately threw errors if it resided outside `BrowserRouter`. Conversely, Remote applications maintaining their own standard `BrowserRouter` caused routing conflicts with the Host.
+**The Solution:** 
+- The Host manages the main URL using `BrowserRouter`.
+- Remote applications manage internal states using `MemoryRouter`. The Host passes down an `initialPath` and syncs changes via an `onNavigate` communication bridge, preserving deep linking without routing collisions.
+
+## 🛠 Local Development Setup
+
+To run the entire Microfrontend infrastructure locally:
+
+```bash
+# 1. Install dependencies (Workspace root)
+yarn install
+
+# 2. Start all applications concurrently
+# This will spawn the Host (5000), Matches (5001), and Live (5002)
+yarn dev
+```
+
+Visit `http://localhost:5000` to interact with the full system.

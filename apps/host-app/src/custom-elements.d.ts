@@ -1,17 +1,17 @@
 // ============================================================
 // CUSTOM ELEMENTS (WEB COMPONENTS) - JSX AUGMENTATION
 //
-// ⚠️  File này BẮT BUỘC phải có `export {}` ở top-level.
+// ⚠️  This file MUST have `export {}` at the top-level.
 //
-// Lý do: Với React 19 + "moduleDetection": "force" trong tsconfig,
-// `declare module 'react'` chỉ hoạt động như MODULE AUGMENTATION
-// (mở rộng React, giữ nguyên FC/useState/...) khi file này là ES Module.
+// Reason: With React 19 + "moduleDetection": "force" in tsconfig,
+// `declare module 'react'` only works as MODULE AUGMENTATION
+// (extends React, keeping FC/useState/...) when this file is an ES Module.
 //
-// Nếu THIẾU `export {}`:
-//   → File là Script → `declare module 'react'` THAY THẾ hoàn toàn
-//     package react → FC, useState, mọi type biến mất!
+// If `export {}` is MISSING:
+//   → File is a Script → `declare module 'react'` REPLACES the entire
+//     react package → FC, useState, all types disappear!
 //
-// Tách file riêng để tránh conflict với `remotes.d.ts` (ambient declarations).
+// Separated to its own file to avoid conflicts with `remotes.d.ts` (ambient declarations).
 // ============================================================
 export { };
 
@@ -29,9 +29,9 @@ declare module 'react' {
        */
       'wc-live-score': React.DetailedHTMLProps<
         React.HTMLAttributes<HTMLElement> & {
-          /** ID trận đấu — truyền qua HTML attribute (chỉ nhận string) */
+          /** Match ID — passed via HTML attribute (only accepts string) */
           'match-id'?: string;
-          /** Dùng `class` thay cho `className` trong Web Component */
+          /** Use `class` instead of `className` in Web Components */
           class?: string;
         },
         HTMLElement

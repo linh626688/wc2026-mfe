@@ -1,19 +1,19 @@
 /*
   remote-matches/index.css
   ========================
-  CHỈ chứa CSS Custom Properties (variables) cần thiết cho standalone mode.
+  ONLY contains CSS Custom Properties (variables) necessary for standalone mode.
 
-  TẠI SAO không đặt style cho h1, h2, body... ở đây?
-  → Khi Host load remoteEntry.js, Vite inject toàn bộ CSS này vào <head>
-    của trang Host → các selector global sẽ ghi đè lên CSS của Host.
+  WHY not put styles for h1, h2, body... here?
+  → When Host loads remoteEntry.js, Vite injects all this CSS into the <head>
+    of the Host page → global selectors will overwrite Host CSS.
 
-  Giải pháp:
-  → Global selectors → LOẠI BỎ hoặc scope vào #root của standalone
+  Solution:
+  → Global selectors → REMOVE or scope to standalone's #root
   → Component styles → CSS Modules (MatchList.module.css)
-  → Vue widget → Shadow DOM (đã cô lập hoàn toàn)
+  → Vue widget → Shadow DOM (fully isolated)
 */
 
-/* Chỉ dùng khi remote-matches chạy standalone (port 5001) */
+/* Only used when remote-matches is running standalone (port 5001) */
 #root {
   font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
   margin: 0 auto;

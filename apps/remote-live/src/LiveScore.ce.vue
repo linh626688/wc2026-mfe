@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from 'vue';
 
-// Nhận match-id từ Host (kebab-case trong HTML tự động map vào camelCase ở đây)
+// Receive match-id from Host (kebab-case in HTML automatically maps to camelCase here)
 const props = defineProps({
   matchId: {
     type: String,
@@ -9,7 +9,7 @@ const props = defineProps({
   }
 });
 
-// Giả lập dữ liệu dựa trên matchId
+// Mock data based on matchId
 const matchData = computed(() => {
   const db = {
     'vie-tha': { teams: 'VN vs THA', score: '2 - 1', time: "89'" },
@@ -37,8 +37,8 @@ const matchData = computed(() => {
 <style>
 /* 
   Shadow DOM Isolation: 
-  CSS Variables (Tokens) xuyên qua được Shadow DOM.
-  Mọi mã màu ở đây đều lấy từ packages/ui/src/design-system.css
+  CSS Variables (Tokens) can pierce through Shadow DOM.
+  All colors here are taken from packages/ui/src/design-system.css
 */
 :host {
   display: block;

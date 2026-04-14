@@ -2,10 +2,10 @@ import { defineCustomElement } from "vue";
 import "@worldcup/ui-component/design-system.css";
 import LiveScore from "./LiveScore.ce.vue";
 
-// Chuyển đối file Vue thành một Custom Element constructor của Vue
+// Convert Vue file into a Vue Custom Element constructor
 const LiveScoreElement = defineCustomElement(LiveScore);
 
-// Hàm đăng ký thẻ
+// Tag registration function
 export function register() {
   if (!customElements.get("wc-live-score")) {
     customElements.define("wc-live-score", LiveScoreElement);
@@ -13,8 +13,8 @@ export function register() {
   }
 }
 
-// Tự động chạy khi được load qua script tag hoặc module import
+// Automatically run when loaded via script tag or module import
 register();
 
-// Export constructor để dùng nếu cần
+// Export constructor for usage if needed
 export default LiveScoreElement;
