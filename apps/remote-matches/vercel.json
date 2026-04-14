@@ -1,5 +1,3 @@
 {
-  "buildCommand": "yarn turbo run build --filter=remote-matches",
-  "outputDirectory": "apps/remote-matches/dist",
-  "framework": "vite"
+  "framework": null
 }

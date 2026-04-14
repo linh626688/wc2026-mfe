@@ -36,16 +36,18 @@ jobs:
           cache: "yarn"
       - run: yarn install --frozen-lockfile
 
-      - name: Deploy to Vercel
+      # Build trước trên GitHub Actions với biến môi trường thực tế
+      - name: Build host-app
+        run: yarn turbo run build --filter=host-app
+        env:
+          VITE_REMOTE_MATCHES_URL: ${{ secrets.PROD_REMOTE_MATCHES_URL }}
+          VITE_REMOTE_LIVE_URL: ${{ secrets.PROD_REMOTE_LIVE_URL }}
+
+      - name: Deploy pre-built output to Vercel
         uses: amondnet/vercel-action@v25
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_HOST }}
-          working-directory: .
-          # SỬA Ở ĐÂY: Dùng -b để truyền biến môi trường vào quá trình Build của Vercel
-          vercel-args: >
-            ${{ github.ref == 'refs/heads/main' && '--prod' || '' }} 
-            --local-config ./apps/host-app/vercel.json
-            -b VITE_REMOTE_MATCHES_URL="${{ secrets.PROD_REMOTE_MATCHES_URL }}"
-            -b VITE_REMOTE_LIVE_URL="${{ secrets.PROD_REMOTE_LIVE_URL }}"
+          working-directory: ./apps/host-app
+          vercel-args: ${{ github.ref == 'refs/heads/main' && '--prod' || '' }} --prebuilt

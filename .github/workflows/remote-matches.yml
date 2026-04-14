@@ -41,13 +41,15 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
-      - name: Deploy to Vercel
+      # Build trước trên GitHub Actions (có quyền truy cập toàn bộ monorepo)
+      - name: Build remote-matches
+        run: yarn turbo run build --filter=remote-matches
+
+      - name: Deploy pre-built output to Vercel
         uses: amondnet/vercel-action@v25
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_REMOTE_MATCHES }}
-          # PHẢI LÀ GỐC để gửi kèm các thư mục packages/ sang Vercel
-          working-directory: .
-          # Chỉ định config nằm sâu bên trong
-          vercel-args: ${{ github.ref == 'refs/heads/main' && '--prod' || '' }} --local-config ./apps/remote-matches/vercel.json
+          working-directory: ./apps/remote-matches
+          vercel-args: ${{ github.ref == 'refs/heads/main' && '--prod' || '' }} --prebuilt
