@@ -28,6 +28,8 @@ jobs:
     name: Deploy Host to Vercel
     needs: contract-test
     runs-on: ubuntu-latest
+    # Khai báo environment để có quyền đọc Environment secrets
+    environment: vercel-dev
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
