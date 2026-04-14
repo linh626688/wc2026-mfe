@@ -34,20 +34,21 @@ jobs:
         with:
           node-version: "20"
           cache: "yarn"
-      - run: yarn install --frozen-lockfile
 
-      # Build trước trên GitHub Actions với biến môi trường thực tế
-      - name: Build host-app
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build host-app with production env vars
         run: yarn turbo run build --filter=host-app
         env:
           VITE_REMOTE_MATCHES_URL: ${{ secrets.PROD_REMOTE_MATCHES_URL }}
           VITE_REMOTE_LIVE_URL: ${{ secrets.PROD_REMOTE_LIVE_URL }}
 
-      - name: Deploy pre-built output to Vercel
+      - name: Deploy to Vercel
         uses: amondnet/vercel-action@v25
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_HOST }}
           working-directory: ./apps/host-app
-          vercel-args: ${{ github.ref == 'refs/heads/main' && '--prod' || '' }} --prebuilt
+          vercel-args: ${{ github.ref == 'refs/heads/main' && '--prod' || '' }}

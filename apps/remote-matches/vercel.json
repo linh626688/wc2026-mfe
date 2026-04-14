@@ -1,3 +1,6 @@
 {
-  "framework": null
+  "buildCommand": "echo 'Build already done by GitHub Actions'",
+  "outputDirectory": "dist",
+  "framework": null,
+  "installCommand": "echo 'Install already done by GitHub Actions'"
 }

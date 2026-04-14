@@ -34,17 +34,18 @@ jobs:
         with:
           node-version: "20"
           cache: "yarn"
-      - run: yarn install --frozen-lockfile
 
-      # Build trước trên GitHub Actions (có quyền truy cập toàn bộ monorepo)
-      - name: Build remote-live
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build remote-live (full monorepo context)
         run: yarn turbo run build --filter=remote-live
 
-      - name: Deploy pre-built output to Vercel
+      - name: Deploy to Vercel
         uses: amondnet/vercel-action@v25
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_REMOTE_LIVE }}
           working-directory: ./apps/remote-live
-          vercel-args: ${{ github.ref == 'refs/heads/main' && '--prod' || '' }} --prebuilt
+          vercel-args: ${{ github.ref == 'refs/heads/main' && '--prod' || '' }}
