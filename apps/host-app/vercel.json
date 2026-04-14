@@ -2,5 +2,11 @@
   "buildCommand": "echo 'Build already done by GitHub Actions'",
   "outputDirectory": "dist",
   "framework": null,
-  "installCommand": "echo 'Install already done by GitHub Actions'"
+  "installCommand": "echo 'Install already done by GitHub Actions'",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
 }
